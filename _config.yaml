@@ -1,2 +1,40 @@
+# Site settings
+title: My AsciiDoc Website
+description: A sample website using AsciiDoc
+baseurl: "/" # Change this if your site is hosted in a subdirectory
+url: "https://kmambo.github.io" # Change this to your GitHub Pages URL
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# AsciiDoc settings
+asciidoc:
+  extensions: [auto-toc]
+  attributes:
+    source-highlighter: rouge
+    icons: font
+
+# GitHub Pages settings
 plugins:
   - jekyll-asciidoc
+
+# Exclude files from being published to GitHub Pages
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .git
+  - .github
+  - .gitignore
+  - README.md
+
+# GitHub Pages specific configuration
+github_pages:
+  jekyll_plugin_version: 4.0.0
