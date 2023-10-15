@@ -1,13 +1,11 @@
 site:
-  title: Antora Demo Site
+  title: kMambo Documen Site
   url: https://kmambo.github.io
   start_page: component-a::admonition.adoc
 content:
   sources:
-    - url: https://@gitlab.com/antora/demo/demo-component-a.git
+    - url: https://github.com/kmambo/kmambo.github.io.git
       branches: HEAD
-    - url: https://gitlab.com/antora/demo/demo-component-b.git
-      branches: [v2.0, v1.0]
       start_path: docs
 ui:
   bundle:
