@@ -1,2 +1,6 @@
 name: kmambo-io
-version: "0.1"
+version: 0.1
+asciidoc:
+  attributes:
+    source-language: asciidoc@
+    table-caption: false
