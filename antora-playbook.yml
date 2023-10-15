@@ -1,9 +1,9 @@
 site:
   title: Antora Docs
-  start_page: kmambo-io::index.adoc
+  start_page: kmambo::index.adoc
 content:
   sources:
-    - url: .
+    - url: git@github.com:kmambo/kmambo.github.io.git
 ui:
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
