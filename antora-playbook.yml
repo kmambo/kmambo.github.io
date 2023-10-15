@@ -1,7 +1,7 @@
 site:
   title: kMambo Documen Site
   url: https://kmambo.github.io
-  start_page: component-a::admonition.adoc
+  start_page: kmambo-docs::index.adoc
 content:
   sources:
     - url: https://github.com/kmambo/kmambo.github.io.git

@@ -1,6 +1,5 @@
 name: kmambo-docs
 title: kMambo Docs
 version: '0.1'
-prerelease: -beta.1
 nav:
 - modules/ROOT/nav.adoc
