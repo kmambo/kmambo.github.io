@@ -1,1 +1,33 @@
-= This is great
+= kMambo
+
+_A cloud-native task management and orchestration system_
+
+== Overview
+
+kMambo runs``jobs`` in a Kubernetes cluster.
+Each `job` is composed of one or more ``tasks``.
+
+A `task` is the smallest unit of work in a kMambo job and runs as a microservice.
+To start a ``task``, you have to provide it with data - some would prefer to call it an `event`.
+The data may be "pushed" to the `task` - for example, by way of an HTTP POST; or it may be "pulled" - for example, the data may be queued to a Redis queue or Kafka or GCP PubSub and the `task` will read from the queue when it is ready to read the data.
+In this latter respect, it differentiates itself from https://xxx[kNative]
+Once a ``task`` is triggered, it consumes the data and produces an output data which can be used to trigger the next `task` in the `job`.
+As per usual, the output data can be "pushed" to or "pulled by" the next `task` in the job.
+A kMambo `task` only cares about the data it is supposed to work on.
+It cares not for who or what produced this data.
+It also does not care who will consume the output data it creates.
+
+A kMambo `job` is programmable.
+
+- It does not specify a static sequence of `tasks`.
+If anything, it allows conditional statements like `if-then-else` to specify the sequence of `tasks` in a `job`.
+- It is possible to program to source of the data that triggers `tasks` and the destination of the output data
+- Retry logic for a `task` is programmable.
+- kMambo also handles `task` definition updates and graceful or abrupt `task` cancellations.
+
+== Example
+
+picture a car company with a fleet on cars where sensors collect all sorts of data from their customers.
+It receives a ton of data from the cars like periodic tire pressure measurements, fuel measurements, engine temperature measurements etc.
+The data is likely to be collected by each car and bundled together and pushed to the car company's cloud deployment, where it is collected in a data lake and then collectively analyzed for patterns to detect conditions like fuel mileage variations in different models and years of the cars or
+
