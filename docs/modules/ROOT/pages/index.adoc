@@ -27,7 +27,22 @@ If anything, it allows conditional statements like `if-then-else` to specify the
 
 == Example
 
-picture a car company with a fleet on cars where sensors collect all sorts of data from their customers.
-It receives a ton of data from the cars like periodic tire pressure measurements, fuel measurements, engine temperature measurements etc.
-The data is likely to be collected by each car and bundled together and pushed to the car company's cloud deployment, where it is collected in a data lake and then collectively analyzed for patterns to detect conditions like fuel mileage variations in different models and years of the cars or
+Picture a car company with a fleet of cars where sensors collect all sorts of data from their cars: periodic tire pressure measurements, fuel measurements, engine temperature measurements etc.
+
+- The data is likely to be collected by each car and bundled together and pushed to the car company's cloud deployment, where it is collected in a data lake.
+- Before the data can be persisted, depending on the privacy requirements of various jurisdictions, personally identifiable information (PII) may have to be stripped out.
+- Additionally, non-PII information like vehicle location or speed may also need to be stripped out.
+- Then, the persisted data is collectively analyzed for patterns to detect conditions like fuel mileage variations in different models and years of the cars.
+
+
+image::kmambo-components-kMambo_components_example___Data_Plane.png[]
+
+In the image above,
+
+. IoT devices in the field - embedded in cars in our case - collect all sorts of telemetry data and push to the Kubernetes cluster.
+. The devices use HTTP for this push through an ingress controller.
+. The ingress controller routes the incoming data to the `Data Ingestion Service` which round-robins the HTTP data to the pods of `Data Ingestion Task` which is a stateless replicaset.
+These pods' only job is to quickly read, validate and queue the incoming data to the `Redis Queue`.
+. It is from here that the pods of the replicaset `Post Ingestion Data Filters` read from the `Redis Queue` do the task of filtering out any data that is not allowed to keep - such as speed and location - and writes the remaining data to a data lake.
+
 

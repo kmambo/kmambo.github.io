@@ -1,33 +1,80 @@
 @startuml
 'https://plantuml.com/component-diagram
+title kMambo components example - Data Plane
+footer kMambo components
+scale max 2048 width
+'scale max 4096 height
 
+skinparam nodesep 3
+skinparam ranksep 2
 
+'skinparam linetype polyline
 
-node "Other Groups" {
-    () HTTP
-    package "Task 1" {
-      cloud "Task 1 Service" as T1
+' Kubernetes
+!define KubernetesPuml https://raw.githubusercontent.com/dcasati/kubernetes-PlantUML/master/dist
 
-      T1 -> [Task One - Pod 1]
-      T1 -> [Task One - Pod 2]
-      T1 -> [...]
-      T1 -> [Task One - Pod //N//]
+!includeurl KubernetesPuml/kubernetes_Common.puml
+!includeurl KubernetesPuml/kubernetes_Context.puml
+!includeurl KubernetesPuml/kubernetes_Simplified.puml
+
+!includeurl KubernetesPuml/OSS/KubernetesSvc.puml
+!includeurl KubernetesPuml/OSS/KubernetesIng.puml
+!includeurl KubernetesPuml/OSS/KubernetesPod.puml
+!includeurl KubernetesPuml/OSS/KubernetesRs.puml
+!includeurl KubernetesPuml/OSS/KubernetesDeploy.puml
+!includeurl KubernetesPuml/OSS/KubernetesHpa.puml
+
+!include <archimate/Archimate>
+
+left to right direction
+
+component "Device X" as device
+component "Device Y" as device2
+component "Device Z" as device3
+
+Cluster_Boundary(cluster, "Kubernetes Cluster") {
+  Namespace_Boundary(ns, "kMambo-workloads") {
+    KubernetesIng(ingress, "", "")
+
+    package "Data Ingestion Task" {
+      KubernetesSvc(T1, "Data Ingestion Service", "")
+
+      KubernetesPod(pod1, "Pod1", " ")
+      KubernetesPod(pod2, "Pod2", " ")
+      KubernetesPod(pod3, "Pod3", " ")
     }
 
-    database "Redis" {
-    }
 
-"Task 1" -> Redis
-  FTP - [Second Component]
-  [First Component] --> FTP
+  package "Post Ingestion\nData Filters (DF)" {
+      KubernetesPod(pod_df1, "Pod_DF1", " ")
+      KubernetesPod(pod_df2, "Pod_DF2", " ")
+  }
+}
 }
 
+queue "Redis Queue" as redis
+database DataLake
 
 
+Rel(device, ingress, " ")
+Rel(device2, ingress, " ")
+Rel(device3, ingress, " ")
+Rel(ingress, T1, " ")
+
+Rel(T1, pod1," ")
+Rel(T1, pod2," ")
+Rel(T1, pod3," ")
+Rel(pod1, redis, " ")
+Rel(pod2, redis, " ")
+Rel(pod3, redis, " ")
+
+Rel_Flow_Left(pod_df1, redis, "listen")
+Rel_Flow_Left(pod_df2, redis, "listen")
+Rel_U(redis, pod_df1, "event 1")
+Rel_U(redis, pod_df2, "event 2")
 
 
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+pod_df1 --> DataLake
+pod_df2 -> DataLake
 
 @enduml
