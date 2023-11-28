@@ -4,26 +4,26 @@ _A cloud-native task management and orchestration system_
 
 == Overview
 
-kMambo runs``jobs`` in a Kubernetes cluster.
-Each `job` is composed of one or more ``tasks``.
+kMambo runs``Workflows`` in a Kubernetes cluster.
+Each `Workflow` is composed of one or more ``tasks``.
 
-A `task` is the smallest unit of work in a kMambo job and runs as a microservice.
-To start a ``task``, you have to provide it with data - some would prefer to call it an `event`.
-The data may be "pushed" to the `task` - for example, by way of an HTTP POST; or it may be "pulled" - for example, the data may be queued to a Redis queue or Kafka or GCP PubSub and the `task` will read from the queue when it is ready to read the data.
+A `Task` is the smallest unit of work in a kMambo Workflow and runs as a microservice.
+To start a ``Task``, you have to provide it with data - some would prefer to call it an `event`.
+The data may be "pushed" to the `Task` - for example, by way of an HTTP POST; or it may be "pulled" - for example, the data may be queued to a Redis queue or Kafka or GCP PubSub and the `Task` will read from the queue when it is ready to read the data.
 In this latter respect, it differentiates itself from https://xxx[kNative]
-Once a ``task`` is triggered, it consumes the data and produces an output data which can be used to trigger the next `task` in the `job`.
-As per usual, the output data can be "pushed" to or "pulled by" the next `task` in the job.
-A kMambo `task` only cares about the data it is supposed to work on.
+Once a ``Task`` is triggered, it consumes the data and produces an output data which can be used to trigger the next `Task` in the `Workflow`.
+As per usual, the output data can be "pushed" to or "pulled by" the next `Task` in the Workflow.
+A kMambo `Task` only cares about the data it is supposed to work on.
 It cares not for who or what produced this data.
 It also does not care who will consume the output data it creates.
 
-A kMambo `job` is programmable.
+A kMambo `Workflow` is programmable.
 
 - It does not specify a static sequence of `tasks`.
-If anything, it allows conditional statements like `if-then-else` to specify the sequence of `tasks` in a `job`.
+If anything, it allows conditional statements like `if-then-else` to specify the sequence of `tasks` in a `Workflow`.
 - It is possible to program to source of the data that triggers `tasks` and the destination of the output data
-- Retry logic for a `task` is programmable.
-- kMambo also handles `task` definition updates and graceful or abrupt `task` cancellations.
+- Retry logic for a `Task` is programmable.
+- kMambo also handles `Task` definition updates and graceful or abrupt `Task` cancellations.
 
 == Example
 
@@ -80,7 +80,7 @@ filtering out all personally identifiable information (PII).
 === _Task 1 - IoT data ingestion task_
 [source,yaml]
 ----
-apiversion: kmambo.io/v1alpha1
+apiVersion: kmambo.io/v1alpha1
 kind: Task
 metadata:
    name: iot-data-ingestion-task
@@ -121,6 +121,7 @@ iot_ingest = Task(name="iot-data-ingestion-task", replicas=30, templates=[templa
 registry.register(iot_ingest)
 ----
 
+The Python code allows for a more concise expression of the same `Task`.
 Note that we are not under-specifying the container template in the Python model, it's just that the Python model has sane defaults. For example, the HTTP port is assumed to be 8080 in the container, the port name is assumed to be `http` and the liveness relative URL is at `/livez` and the readiness URL is at `/readyz` but all this can be easily overridden.
 
 We will discuss the Python kMambo library and CLI executable later.
@@ -132,7 +133,7 @@ Likewise, let's define the PII filter task
 === _Task 2 - PII data filtration task_
 [source,yaml]
 ----
-apiversion: kmambo.io/v1alpha1
+apiVersion: kmambo.io/v1alpha1
 kind: Task
 metadata:
    name: iot-data-pii-filter-task
@@ -167,7 +168,6 @@ from kmambo import Task, HttpContainerTemplate, registry
 template_pii_filter =  HttpContainerTemplate(
 image="artifact-registry.kmambo.io/pii-filter-task-img:0.4",
 command=["piifilter"],
-
 )
 iot_pii_filter = Task(name="iot-data-pii-filter-task", replicas=30,
                       templates=[template_pii_filter])
@@ -182,7 +182,7 @@ Behind the scenes, kMambo creates a `Deployment` and then lets the Kubernetes Co
 Now we need to bring the 2 tasks above together.
 [source, yaml]
 ----
-apiversion: kmambo.io/v1alpha1
+apiVersion: kmambo.io/v1alpha1
 kind: Workflow
 metadata:
   name: iot-data-ingestion-task
@@ -210,34 +210,65 @@ spec:
           final: true
 ----
 
-And as per usual, there is a Python equivalent of the workflow and the message passing logic
-[source, python]
----
-# workflows/iotstore.py
-from kmambo import Workflow, registry,
-from .tasks import pii, iotingest
-task1, task2 = registry["iot-data-ingestion-task"], registry["iot-data-pii-filter-task"]
-workflow = Workflow()
----
+We must skip the Python equivalent for the moment but we will come back to it.
 
-      
 What really ties one task to the next is that the output of the first task is sent to the input next one (PII filter)
 
 Likewise, let's define the `queue` iot-pubsub. We want this to be a GCP PubSub queue
 [source,yaml]
 ----
-apiversion: kmambo.io/v1alpha1
+apiVersion: kmambo.io/v1alpha1
 kind: Queue
 metadata:
   name: iot-pubsub
 spec:
+  queueClassName: skalar-pull
   topic: projects/partho-9a092/topics/skalar-sandbox
+---
+apiVersion: kmambo.io/v1alpha1
+kind: QueueClass
+metadata:
+  name: skalar-pull
+spec:
+  controllerName: kmambo.io/gcp-pubsub
+  parametersRef:
+    group: kmambo.io/v1alpha1
+    kind: GcpPubSubConfig
+    name: iot-pubsub-gcp
+---
+apiVersion: kmambo.io/v1alpha1
+kind: GcpPubSubConfig
+metadata:
+    name: iot-pubsub-gcp
+spec:
+   topic: projects/insertprojectid/topics/skalar-sandbox
+   subscription: projects/insertprojectid/subscriptions/skalar-sandbox-pull
 ----
 
-For the sake of completeness, let's define the Service which provides the starting point for all data that kicks of the workflow.
+For the moment, we are ignoring the authentication and authorization needed by the task workloads,
+both at the publish and subscribe ends.
+
+There is the matter of the Python equivalent
+[source,python]
+----
+from kmambo import registry, Queue
+from kmambo.pubsub import PubSub
+
+pubsub = Queue(name="iot-pubsub",
+               queueclass=PubSub(name="skalar-pull", configname="iot-pubsub-gcp",
+                                 topic="projects/insertprojectid/topics/skalar-sandbox",
+                                 subscription="projects/insertprojectid/subscriptions/skalar-sandbox-pull")
+               )
+registry.register(pubsub)
+----
+
+
+
+For the sake of completeness, let's define the Service which provides the starting point for all data that kicks off
+the workflow.
 [source,yaml]
 ----
-apiversion: kmambo.io/v1alpha1
+apiVersion: kmambo.io/v1alpha1
 kind: Service
 metadata:
   name: iot-http-push
@@ -254,6 +285,21 @@ spec:
 As things stand, we only support service-type `ClusterIP` only as of now.
 
 Of course, we would still need an ingress or a gateway to allow traffic to reach the pods via the Service.
+
+And as per usual, there is a Python equivalent of the workflow and the message passing logic
+[source, python]
+----
+# workflows/iotstore.py
+from kmambo import Workflow, registry, Queue, Service
+
+task1, task2 = registry["iot-data-ingestion-task"], registry["iot-data-pii-filter-task"]
+service = Service(name="iot-http-push", namespace="iot-workflow-ns", seclector={""})
+registry.register(service)
+
+
+workflow = Workflow(chain=[task1, task2,])
+registry.register(workflow)
+----
 
 === kMambo components
 
