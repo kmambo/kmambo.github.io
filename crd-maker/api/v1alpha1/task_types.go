@@ -35,7 +35,7 @@ type TaskSpec struct {
 	// Foo is an example field of Task. Edit task_types.go to remove/update
 	Selector *TaskLabelSelectorApplyConfiguration `json:"selector,omitempty"`
 	// +kubebuilder:validation:Required
-	Template *corev1.PodTemplateSpecApplyConfiguration `json:"template,omitempty"`
+	Template *corev1.PodSpecApplyConfiguration `json:"template,omitempty"`
 }
 
 // TaskStatus defines the observed state of Task
