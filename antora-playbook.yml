@@ -1,5 +1,5 @@
 site:
-  title: kMambo Documen Site
+  title: kMambo Documentation Site
   url: https://kmambo.github.io
   start_page: kmambo-docs::index.adoc
 content:

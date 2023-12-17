@@ -9,4 +9,19 @@ metadata:
     app.kubernetes.io/created-by: crd-maker
   name: task-sample
 spec:
-  # TODO(user): Add fields here
+  template:
+    containers:
+      - image: artifact-registry.kmambo.io/ingest-task-img:0.5
+        command: [ "httpserver" ]
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http

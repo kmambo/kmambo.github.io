@@ -177,3 +177,13 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST): $(LOCALBIN)
 	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+
+.PHONY: dry-task
+dry-task: config/samples/_v1alpha1_task.yaml
+	$(KUBECTL) apply -f config/samples/_v1alpha1_task.yaml --dry-run=server
+
+.PHONY: crd
+crd:  config/crd/bases/kmambo.io_tasks.yaml config/crd/bases/kmambo.io_workflows.yaml
+	$(KUBECTL) apply -f config/crd/bases/kmambo.io_tasks.yaml
+	$(KUBECTL) apply -f config/crd/bases/kmambo.io_workflows.yaml
+

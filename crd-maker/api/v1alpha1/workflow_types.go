@@ -23,13 +23,21 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type TasksEventInterface struct {
+}
+
+// TaskRefSpec defines the Task name so
+type TaskRefSpec struct {
+	Tasks []TasksEventInterface `json:"spec,omitempty"`
+}
+
 // WorkflowSpec defines the desired state of Workflow
 type WorkflowSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of Workflow. Edit workflow_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Tasks string `json:"foo,omitempty"`
 }
 
 // WorkflowStatus defines the observed state of Workflow

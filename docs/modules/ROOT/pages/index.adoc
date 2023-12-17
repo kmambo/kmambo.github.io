@@ -83,16 +83,18 @@ filtering out all personally identifiable information (PII).
 apiVersion: kmambo.io/v1alpha1
 kind: Task
 metadata:
-   name: iot-data-ingestion-task
+  labels:
+    app.kubernetes.io/name: task
+    app.kubernetes.io/instance: task-sample
+    app.kubernetes.io/part-of: crd-maker
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: crd-maker
+  name: task-sample
 spec:
-   replicas: 30
-   affinity: {}
-   templates:
-      imagePullSecret: []
-      containers:
+  template:
+    containers:
       - image: artifact-registry.kmambo.io/ingest-task-img:0.5
-        imagePullPolicy: IfNotPresent
-        command: ["httpserver"] 
+        command: [ "httpserver" ]
         ports:
           - name: http
             containerPort: 8080
