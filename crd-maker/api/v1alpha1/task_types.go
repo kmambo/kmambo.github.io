@@ -32,7 +32,6 @@ type TaskSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Task. Edit task_types.go to remove/update
 	Selector *TaskLabelSelectorApplyConfiguration `json:"selector,omitempty"`
 	// +kubebuilder:validation:Required
 	Template *corev1.PodSpecApplyConfiguration `json:"template,omitempty"`

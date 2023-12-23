@@ -35,8 +35,8 @@ spec:
             description: TaskSpec defines the desired state of Task
             properties:
               selector:
-                description: Foo is an example field of Task. Edit task_types.go to
-                  remove/update
+                description: LabelSelectorApplyConfiguration represents an declarative
+                  configuration of the LabelSelector type for use with apply.
                 properties:
                   matchExpressions:
                     items:
