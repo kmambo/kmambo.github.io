@@ -89,7 +89,7 @@ metadata:
     app.kubernetes.io/part-of: crd-maker
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: crd-maker
-  name: task-sample
+  name: iot-data-ingestion-task
 spec:
   template:
     containers:
