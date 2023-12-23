@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/kmambo.github.io.iml" filepath="$PROJECT_DIR$/.idea/kmambo.github.io.iml" />
+      <module fileurl="file://$PROJECT_DIR$/crd-maker/crd-maker.iml" filepath="$PROJECT_DIR$/crd-maker/crd-maker.iml" />
     </modules>
   </component>
 </project>
