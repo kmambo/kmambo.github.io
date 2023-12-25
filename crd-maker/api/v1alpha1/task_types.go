@@ -44,6 +44,7 @@ type TaskStatus struct {
 }
 
 //+kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
 //+kubebuilder:subresource:status
 
 // Task is the Schema for the tasks API
@@ -51,6 +52,7 @@ type Task struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
+	// +kubebuilder:validation:Required
 	Spec   TaskSpec   `json:"spec,omitempty"`
 	Status TaskStatus `json:"status,omitempty"`
 }
