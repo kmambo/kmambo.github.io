@@ -18,6 +18,12 @@ kubernetes = "^28.1.0"
 [tool.poetry.group.dev.dependencies]
 cython = "^3.0.7"
 wheel = "^0.42.0"
+kopf = {extras = ["dev"], version = "^1.36.2"}
+pytest = "^7.4.3"
+isort = "^5.13.2"
+black = "^23.12.1"
+mypy = "^1.8.0"
+flake8 = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,0 +1,28 @@
+apiVersion: kmambo.io/v1alpha1
+kind: Task
+metadata:
+  labels:
+    app.kubernetes.io/name: task
+    app.kubernetes.io/instance: task-sample
+    app.kubernetes.io/part-of: crd-maker
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: crd-maker
+  name: iot-data-ingestion-task
+spec:
+  template:
+    containers:
+      - image:  artifact-registry.kmambo.io/pii-filter-task-img:0.4
+        name: pii-filter-task-04
+        command: [ "httpserver" ]
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http

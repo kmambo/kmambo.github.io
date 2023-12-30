@@ -94,6 +94,7 @@ spec:
   template:
     containers:
       - image: artifact-registry.kmambo.io/ingest-task-img:0.5
+        name: ingest-tak-img-05
         command: [ "httpserver" ]
         ports:
           - name: http
