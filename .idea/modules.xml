@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/crd-maker/crd-maker.iml" filepath="$PROJECT_DIR$/crd-maker/crd-maker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/docs/docs.iml" filepath="$PROJECT_DIR$/docs/docs.iml" />
       <module fileurl="file://$PROJECT_DIR$/kmambo-operator/kmambo-operator.iml" filepath="$PROJECT_DIR$/kmambo-operator/kmambo-operator.iml" />
     </modules>
   </component>
