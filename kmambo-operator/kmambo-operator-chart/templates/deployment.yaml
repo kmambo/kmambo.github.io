@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "kmambo-operator-chart.labels" . | nindent 4 }}
 spec:
+  strategy:
+    type: Recreate
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -36,17 +38,22 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "python"
+          args:
+            - "-m"
+            - "kopf"
+            - "run"
+            - "/app/kmambo/task_controller.py"
+            - "--all-namespaces"
+            - "--liveness=http://0.0.0.0:{{ .Values.image.containerPort }}/healthz"
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.image.containerPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
+              path: /healthz
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

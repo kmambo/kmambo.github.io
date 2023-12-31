@@ -5,10 +5,12 @@
 replicaCount: 1
 
 image:
-  repository: docker.io/kmambo-operator
+  repository: pbhowmic/kmambo-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.1.0"
+  containerPort: "8080"
+
 
 imagePullSecrets: []
 nameOverride: ""
