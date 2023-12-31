@@ -11,7 +11,7 @@ requirements.txt: poetry.lock
 poetry.lock: pyproject.toml
 	poetry lock --no-update
 
-.PHONY: image lint tag
+.PHONY: image lint tag undeploy undeploy
 
 image: requirements.txt Dockerfile
 	$(DOCKER) build -f Dockerfile -t $(NAME):$(VERSION) .
@@ -24,3 +24,9 @@ lint:
 	black src/kmambo
 	flake8 src/kmambo
 	mypy src/kmambo
+
+deploy:
+	helm install kmambo-operatory-py kmambo-operator-chart --namespace kmambo-ns --create-namespace
+
+undeploy:
+	helm uninstall  kmambo-operatory-py -n kmambo-ns
